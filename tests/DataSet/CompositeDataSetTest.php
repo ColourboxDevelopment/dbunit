@@ -14,7 +14,7 @@ use PHPUnit\DbUnit\DataSet\DefaultTable;
 use PHPUnit\DbUnit\DataSet\DefaultTableMetadata;
 use PHPUnit\DbUnit\TestCase;
 
-class Extensions_Database_DataSet_CompositeDataSetTest extends \PHPUnit\Framework\TestCase
+class CompositeDataSetTest extends \PHPUnit\Framework\TestCase
 {
     protected $expectedDataSet1;
     protected $expectedDataSet2;
@@ -141,12 +141,10 @@ asdflkjsadf asdfsadfhl "adsf, halsdf" sadfhlasdf'
         $this->assertEquals(4, $compositeDataSet->getTable('table3')->getRowCount());
     }
 
-    /**
-     * @expectedException           InvalidArgumentException
-     * @expectedExceptionMessage    There is already a table named table3 with different table definition
-     */
     public function testExceptionOnIncompatibleTablesSameTableNames(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $inCompatibleTableMetaData = new DefaultTableMetadata(
             'table3',
             ['table3_id', 'column13', 'column14', 'column15', 'column16']
@@ -166,12 +164,10 @@ asdflkjsadf asdfsadfhl "adsf, halsdf" sadfhlasdf'
         ]);
     }
 
-    /**
-     * @expectedException           InvalidArgumentException
-     * @expectedExceptionMessage    There is already a table named table3 with different table definition
-     */
     public function testExceptionOnIncompatibleTablesSameTableNames2(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $inCompatibleTableMetaData = new DefaultTableMetadata(
             'table3',
             ['table3_id', 'column13', 'column14', 'column15', 'column16']

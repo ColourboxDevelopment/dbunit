@@ -12,7 +12,7 @@ use PHPUnit\DbUnit\Constraint\TableRowCount;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 
-class Extensions_Database_Constraint_TableRowCountTest extends TestCase
+class TableRowCountTest extends TestCase
 {
     public function testConstraint(): void
     {

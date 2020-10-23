@@ -22,7 +22,7 @@ use PHPUnit\DbUnit\TestCase;
 
 require_once \dirname(__DIR__) . DIRECTORY_SEPARATOR . '_files' . DIRECTORY_SEPARATOR . 'DatabaseTestUtility.php';
 
-class Extensions_Database_Operation_RowBasedTest extends TestCase
+class RowBasedTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -108,40 +108,27 @@ class Extensions_Database_Operation_RowBasedTest extends TestCase
         );
 
         /* @var $mockOperation PHPUnit_Framework_MockObject_MockObject */
-        $mockOperation->expects($this->at(0))
-                ->method('buildOperationQuery')
-                ->with($connection->createDataSet()->getTableMetaData('table1'), $table1)
-                ->will(
-                    $this->returnValue('INSERT INTO table1 (table1_id, column1, column2, column3, column4) VALUES (?, ?, ?, ?, ?)')
-                );
+        $mockOperation->method('buildOperationQuery')
+            ->withConsecutive(
+                [$connection->createDataSet()->getTableMetaData('table1'), $table1],
+                [$connection->createDataSet()->getTableMetaData('table2'), $table2],
+            )
+            ->will($this->onConsecutiveCalls(
+                'INSERT INTO table1 (table1_id, column1, column2, column3, column4) VALUES (?, ?, ?, ?, ?)',
+                'INSERT INTO table2 (table2_id, column5, column6, column7, column8) VALUES (?, ?, ?, ?, ?)',
+            ));
 
-        $mockOperation->expects($this->at(1))
-                ->method('buildOperationArguments')
-                ->with($connection->createDataSet()->getTableMetaData('table1'), $table1, 0)
-                ->will(
-                    $this->returnValue([1, 'foo', 42, 4.2, 'bar'])
-                );
-
-        $mockOperation->expects($this->at(2))
-                ->method('buildOperationArguments')
-                ->with($connection->createDataSet()->getTableMetaData('table1'), $table1, 1)
-                ->will(
-                    $this->returnValue([2, 'qwerty', 23, 2.3, 'dvorak'])
-                );
-
-        $mockOperation->expects($this->at(3))
-                ->method('buildOperationQuery')
-                ->with($connection->createDataSet()->getTableMetaData('table2'), $table2)
-                ->will(
-                    $this->returnValue('INSERT INTO table2 (table2_id, column5, column6, column7, column8) VALUES (?, ?, ?, ?, ?)')
-                );
-
-        $mockOperation->expects($this->at(4))
-                ->method('buildOperationArguments')
-                ->with($connection->createDataSet()->getTableMetaData('table2'), $table2, 0)
-                ->will(
-                    $this->returnValue([1, 'fdyhkn', 64, 4568.64, 'hkladfg'])
-                );
+        $mockOperation->method('buildOperationArguments')
+            ->withConsecutive(
+                [$connection->createDataSet()->getTableMetaData('table1'), $table1, 0],
+                [$connection->createDataSet()->getTableMetaData('table1'), $table1, 1],
+                [$connection->createDataSet()->getTableMetaData('table2'), $table2, 0],
+            )
+            ->will($this->onConsecutiveCalls(
+                [1, 'foo', 42, 4.2, 'bar'],
+                [2, 'qwerty', 23, 2.3, 'dvorak'],
+                [1, 'fdyhkn', 64, 4568.64, 'hkladfg']
+            ));
 
         /* @var $mockOperation RowBased */
         $mockOperation->execute($connection, $dataSet);
